@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<link rel="stylesheet" href="./index.css">
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+			<title>Online Store</title>
+		</head>
+	<body>
+		<header class="header">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+				<div class="container-fluid">
+				  <h1 style="color:white">Life Calculator</h1>
+				  </div>
+				</div>
+			  </nav>
+		</header>
+		<main class="main">
+			<div class="modal" id="modal">
+				<form class="row g-3">
+					<div class="col-auto">
+					  <input autocomplete="off" required class="form-control" id="inputProductCh" placeholder="Введите покупку">
+					</div>
+					<div class="col-auto">
+						<input autocomplete="off" required class="form-control" id="inputPriceCh" placeholder="Введите цену">
+					  </div>
+					<div class="col-auto">
+					  <button type="submit" id="changeConfirm" class="btn btn-primary mb-3">Подтвердить</button>
+					  <button type="submit" id="close" class="btn btn-secondary mb-3">Закрыть</button>
+					</div>
+				  </form>
+			</div>
+			<div class="confirm" id="confirm">
+				<h1 class="h1">Доходы и расходы</h1>
+				<div class="confirmEarn">
+					<label class="text">Доходы</label>
+				<form class="row g-3" class="form">
+					<div class="col-auto">
+					  <input required autocomplete="off" class="form-control" id="inputEarn" placeholder="Введите заработок">
+					</div>
+					<div class="col-auto">
+					  <button type="submit" id="1" class="btn btn-primary mb-3">Подтвердить</button>
+					</div>
+				  </form>
+				</div>
+			<div class="confirmExpenses">
+				<label class="text">Расходы</label>
+				<form class="row g-3">
+					<div class="col-auto">
+					  <input autocomplete="off" required class="form-control" id="inputProduct" placeholder="Введите покупку">
+					</div>
+					<div class="col-auto">
+						<input autocomplete="off" required class="form-control" id="inputPrice" placeholder="Введите цену">
+					  </div>
+					<div class="col-auto">
+					  <button type="submit" id="2" class="btn btn-primary mb-3">Подтвердить</button>
+					</div>
+				  </form>
+			</div>
+		</div>
+			<div class="right">
+				<h1 class="h1">Список расходов</h1>
+				<div class="payment" id="payment">
+						
+				</div>
+				<div class="list" id="list">
+
+				</div>
+
+			</div>
+		</main>
+	</body>
+	<script src="./index.js"></script>
+</html>
+
