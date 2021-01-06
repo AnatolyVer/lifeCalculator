@@ -8,15 +8,23 @@ const closeM = document.getElementById("close")
 let idCh
 
 const getItem = ({product,price,id}) => 
-`<div class="product" id=product-${id}><span class="listContent">  ${product}</span>
+`<div class="product" id="product-${id}"><span class="listContent">  ${product}</span>
 <span class="contentPrice" style="color:red">-${price}</span>
 <button class="rButton" data-id="${id}">Редактировать</button>
 <button class="deleteButton" id="${id}">Удалить</button>
 </div>`
 
 
+const calculateLost = () => {
+  const arr = JSON.parse(localStorage.getItem('cart'))
+  let sum = 0 
+  arr.forEach(product => sum += product.price)
+  return sum
+}
+
+
 const getStatus = () => {
-  let diff = (localStorage.getItem("earning") - localStorage.getItem("losing"))
+  const diff = (localStorage.getItem("earning") - calculateLost())
   return `
 <div class="status"><div class="statusContent">Доходы:<a style="color:green;">+${localStorage.getItem("earning")}</a></div>
 <div class="statusContent">Расходы:<a style="color:red;">-${localStorage.getItem("losing")}</a></div>
@@ -24,7 +32,7 @@ const getStatus = () => {
 }
 
 
-const delet = ({target}) =>{
+const deleteProduct = ({target}) =>{
   const elem = document.getElementById(`product-${target.id}`);
   const modal = document.getElementById('modal')
   let arr = JSON.parse(localStorage.getItem('cart'));
@@ -44,7 +52,7 @@ const delet = ({target}) =>{
 }
 
 
-const changes = ({target}) =>{
+const changeClick = ({target}) =>{
   const arr = JSON.parse(localStorage.getItem('cart'));
   const elemForChange = arr.find(elem => elem.id == idCh)
   const product = document.getElementById('inputProductCh').value
@@ -72,26 +80,34 @@ data.forEach((product) =>
   )
 }
 
-const click1 = ({ target }) => {
+const confirmEarn = ({ target }) => {
    const earn = document.getElementById("inputEarn").value
-   localStorage.setItem("earning",Number(localStorage.getItem("earning")) + Number(earn))
+   if (earn > 0 && earn < 100000000) localStorage.setItem("earning",Number(localStorage.getItem("earning")) + Number(earn))
    Refresh()
   }
 
 
-const click2 = ({ target }) => {
+const confirmLose = ({ target }) => {
     const product = document.getElementById("inputProduct").value
     const price = document.getElementById("inputPrice").value
     if (!localStorage.getItem('cart')) {
       localStorage.setItem('cart', JSON.stringify([]));
     }
+    if (!localStorage.getItem('earning')) {
+      localStorage.setItem('earning', 0);
+    }
+    if (!localStorage.getItem('losing')) {
+      localStorage.setItem('losing', 0);
+    }
     if (product && price){
+      if (price > 0 && price < 100000000){
         localStorage.setItem("losing",Number(localStorage.getItem("losing")) + Number(price))
         const arr = JSON.parse(localStorage.getItem('cart'));
         let id 
-        arr[arr.length - 1]?.id ? id = arr[arr.length - 1].id + 1 : id = 1
+        arr[arr.length - 1]?.id ? id = arr[arr.length - 1].id + 1 : id = 1 //проверка  для установки id для продукта
         arr.push({product,price,id})
         localStorage.setItem('cart', JSON.stringify(arr));
+      }
     }
     Refresh()
 }
@@ -99,16 +115,21 @@ const click2 = ({ target }) => {
 
 
 const init = () => {
-button1.addEventListener('click', click1)
-button2.addEventListener('click', click2)
-list.addEventListener('click', delet)
-change.addEventListener('click', changes)
+button1.addEventListener('click', confirmEarn)
+button2.addEventListener('click', confirmLose)
+list.addEventListener('click', deleteProduct)
+change.addEventListener('click', changeClick)
 closeM.addEventListener('click', closeModal)
 if (!localStorage.getItem('cart')) {
     localStorage.setItem('cart', JSON.stringify([]));
   }
+  if (!localStorage.getItem('earning')) {
+    localStorage.setItem('earning', 0);
+  }
+  if (!localStorage.getItem('losing')) {
+    localStorage.setItem('losing', 0);
+  }
   Refresh()
 }
-
 
 init()
