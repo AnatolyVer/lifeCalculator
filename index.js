@@ -16,18 +16,31 @@ const getItem = ({product,price,id}) =>
 
 
 const calculateLost = () => {
-  const arr = JSON.parse(localStorage.getItem('cart'))
+  const arr = JSON.parse(getData('cart'))
   let sum = 0 
-  arr.forEach(product => sum += product.price)
-  return sum
+  arr.forEach(product => sum += Number(product.price))
+  localStorage.setItem('losing',sum)
 }
 
 
+const getData = key =>{
+  if (!localStorage.getItem('cart')) {
+    localStorage.setItem('cart', JSON.stringify([]));
+  }
+  if (!localStorage.getItem('earning')) {
+    localStorage.setItem('earning', 0);
+  }
+  if (!localStorage.getItem('losing')) {
+    localStorage.setItem('losing', 0);
+  }
+  return localStorage.getItem(key)
+}
+
 const getStatus = () => {
-  const diff = (localStorage.getItem("earning") - calculateLost())
+  const diff = (getData('earning') - getData('losing'))
   return `
-<div class="status"><div class="statusContent">Доходы:<a style="color:green;">+${localStorage.getItem("earning")}</a></div>
-<div class="statusContent">Расходы:<a style="color:red;">-${localStorage.getItem("losing")}</a></div>
+<div class="status"><div class="statusContent">Доходы:<a style="color:green;">+${getData('earning')}</a></div>
+<div class="statusContent">Расходы:<a style="color:red;">-${getData('losing')}</a></div>
 <div class="statusContent">Прибыль:<a>${diff}</a></div></div>`
 }
 
@@ -35,7 +48,7 @@ const getStatus = () => {
 const deleteProduct = ({target}) =>{
   const elem = document.getElementById(`product-${target.id}`);
   const modal = document.getElementById('modal')
-  let arr = JSON.parse(localStorage.getItem('cart'));
+  let arr = JSON.parse(getData('cart'));
   if (target.hasAttribute('data-id'))
   {
     modal.style.display = "block"
@@ -46,14 +59,14 @@ const deleteProduct = ({target}) =>{
   
   const elemForDelete = arr.find((elem) => elem.id == target.id);
   arr = arr.filter(elem => elem != elemForDelete)
-  localStorage.setItem("losing",Number(localStorage.getItem("losing")) - Number(elemForDelete.price))
+  localStorage.setItem("losing",Number(getData('losing')) - Number(elemForDelete.price))
   localStorage.setItem('cart', JSON.stringify(arr));
   Refresh()
 }
 
 
 const changeClick = ({target}) =>{
-  const arr = JSON.parse(localStorage.getItem('cart'));
+  const arr = JSON.parse(getData('cart'));
   const elemForChange = arr.find(elem => elem.id == idCh)
   const product = document.getElementById('inputProductCh').value
   const price = document.getElementById('inputPriceCh').value
@@ -64,6 +77,7 @@ const changeClick = ({target}) =>{
     modal.style.display = "none"
     localStorage.setItem('cart', JSON.stringify(arr));
   }
+  calculateLost()
   Refresh()
 }
 
@@ -74,7 +88,7 @@ const Refresh = () => {
 while(list.firstChild)  list.firstChild.remove()
 while(payment.firstChild)  payment.firstChild.remove()
 payment.insertAdjacentHTML('beforeend', getStatus())
-const data = JSON.parse(localStorage.getItem('cart'));
+const data = JSON.parse(getData('cart'));
 data.forEach((product) =>
   list.insertAdjacentHTML('beforeend', getItem(product))
   )
@@ -82,7 +96,7 @@ data.forEach((product) =>
 
 const confirmEarn = ({ target }) => {
    const earn = document.getElementById("inputEarn").value
-   if (earn > 0 && earn < 100000000) localStorage.setItem("earning",Number(localStorage.getItem("earning")) + Number(earn))
+   if (earn > 0 && earn < 100000000) localStorage.setItem("earning",Number(getData('earning')) + Number(earn))
    Refresh()
   }
 
@@ -90,19 +104,10 @@ const confirmEarn = ({ target }) => {
 const confirmLose = ({ target }) => {
     const product = document.getElementById("inputProduct").value
     const price = document.getElementById("inputPrice").value
-    if (!localStorage.getItem('cart')) {
-      localStorage.setItem('cart', JSON.stringify([]));
-    }
-    if (!localStorage.getItem('earning')) {
-      localStorage.setItem('earning', 0);
-    }
-    if (!localStorage.getItem('losing')) {
-      localStorage.setItem('losing', 0);
-    }
     if (product && price){
       if (price > 0 && price < 100000000){
-        localStorage.setItem("losing",Number(localStorage.getItem("losing")) + Number(price))
-        const arr = JSON.parse(localStorage.getItem('cart'));
+        localStorage.setItem("losing",Number(getData('losing')) + Number(price))
+        const arr = JSON.parse(getData('cart'));
         let id 
         arr[arr.length - 1]?.id ? id = arr[arr.length - 1].id + 1 : id = 1 //проверка  для установки id для продукта
         arr.push({product,price,id})
@@ -110,6 +115,7 @@ const confirmLose = ({ target }) => {
       }
     }
     Refresh()
+    calculateLost()
 }
 
 
@@ -120,15 +126,7 @@ button2.addEventListener('click', confirmLose)
 list.addEventListener('click', deleteProduct)
 change.addEventListener('click', changeClick)
 closeM.addEventListener('click', closeModal)
-if (!localStorage.getItem('cart')) {
-    localStorage.setItem('cart', JSON.stringify([]));
-  }
-  if (!localStorage.getItem('earning')) {
-    localStorage.setItem('earning', 0);
-  }
-  if (!localStorage.getItem('losing')) {
-    localStorage.setItem('losing', 0);
-  }
+getData('cart')
   Refresh()
 }
 
