@@ -9,21 +9,19 @@ const payment = document.getElementById("payment")
 let idCh
 
 
-const checkLocStor = key => {
+const checkLocStor = (key,value) => {
   if (!localStorage.getItem(key)) {
-    localStorage.setItem(key, 0)
-    if(key === 'cart') localStorage.setItem(key,JSON.stringify([]))
+    localStorage.setItem(key, value)
   }
 }
 
-const getItem = ({product,price}) => {
-const id = new DataCue().getData
+const getItem = ({product,price,id}) => 
 `<div class="product" id="product-${id}"><span class="listContent">  ${product}</span>
 <span class="contentPrice" style="color:red">-${price}</span>
 <button class="rButton" data-id="${id}">Редактировать</button>
 <button class="deleteButton" id="${id}">Удалить</button>
 </div>`
-}
+
 
 
 const calculateLost = () => {
@@ -35,9 +33,9 @@ const calculateLost = () => {
 
 
 const getData = key =>{
-  checkLocStor('cart')
-  checkLocStor('earning')
-  checkLocStor('losing')
+  checkLocStor('cart', JSON.stringify([]))
+  checkLocStor('earning',0)
+  checkLocStor('losing',0)
   return localStorage.getItem(key)
 }
 
@@ -58,6 +56,9 @@ const deleteProduct = ({target}) =>{
   {
     modal.style.display = "block"
     idCh = target.getAttribute('data-id')
+    const elemForChange = arr.find(elem => elem.id == idCh)
+    document.getElementById('inputProductCh').value = elemForChange.product
+    document.getElementById('inputPriceCh').value = elemForChange.price
     return
   }
   elem.parentNode.removeChild(elem);
@@ -90,8 +91,9 @@ const closeModal = () =>  modal.style.display = "none"
 
 
 const Refresh = () => {
-list.replaceChild()
-payment.replaceChild()
+calculateLost()
+list.replaceChildren()
+payment.replaceChildren()
 payment.insertAdjacentHTML('beforeend', getStatus())
 const data = JSON.parse(getData('cart'));
 data.forEach((product) =>
@@ -105,20 +107,18 @@ const confirmEarn = ({ target }) => {
    Refresh()
   }
 
-
 const confirmLose = ({ target }) => {
     const product = document.getElementById("inputProduct").value
     const price = document.getElementById("inputPrice").value
     if (product && price){
     localStorage.setItem("losing",Number(getData('losing')) + Number(price))
-    const arr = JSON.parse(getData('cart'));
-    let id 
-    arr[arr.length - 1]?.id ? id = arr[arr.length - 1].id + 1 : id = 1 //проверка  для установки id для продукта
+    const arr = JSON.parse(getData('cart'))
+    const id = new Date().getTime()
     arr.push({product,price,id})
     localStorage.setItem('cart', JSON.stringify(arr));
     }
     Refresh()
-    calculateLost()
+    
 }
 
 
